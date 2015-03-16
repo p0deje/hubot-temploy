@@ -19,10 +19,14 @@ describe 'Process', ->
       exec('env').progress -> done()
 
     it 'uses process environment', (done) ->
+      stdout = ''
       process.env.TEST = 1
-      exec('env').progress (child) ->
-        child.stdout.on 'data', (data) ->
-          expect(data.toString()).to.match(/TEST=1/)
+      exec('env')
+        .progress (child) ->
+          child.stdout.on 'data', (data) ->
+            stdout += data.toString()
+        .then ->
+          expect(stdout).to.match(/TEST=1/)
           done()
 
     it 'allows to pass arguments to child process', (done)  ->

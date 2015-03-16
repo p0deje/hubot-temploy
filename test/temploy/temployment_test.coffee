@@ -27,12 +27,14 @@ describe 'Temployment', ->
 
     it 'propagates clone failure error', ->
       new Temployment('blah/blah', 1).start().catch (error) ->
-        expect(error.message).to.eql('`tar fxz app.tar.gz --strip-components 1` failed with code 1')
+        # On Mac, tar exits with 1.
+        # On Linux, tar exits with 2.
+        expect(error.message).to.match(/^`tar fxz app.tar.gz --strip-components 1` failed with code (1|2)$/)
 
     it 'checks config validity', ->
       @temployment.config = {exists: -> false}
       @temployment.start().catch (error) ->
-        expect(error.message).to.eql('Repository is not configured properly.')
+        expect(error.message).to.eql('Repository is not configured properly')
 
     it 'starts temployment', ->
       sinon.spy(@temployment, 'startTemployment')

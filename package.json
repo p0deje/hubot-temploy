@@ -15,12 +15,13 @@
   },
 
   "bugs": {"url": "https://github.com/p0deje/hubot-temploy/issues"},
-  "dependencies": {},
-
-  "peerDependencies": {
-    "hubot": "*",
+  "dependencies": {
     "q": "*",
     "js-yaml": "*"
+  },
+
+  "peerDependencies": {
+    "hubot": "*"
   },
 
   "devDependencies": {

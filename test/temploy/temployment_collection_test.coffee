@@ -20,7 +20,7 @@ describe 'TemploymentCollection', ->
   describe '#get()', ->
     it 'returns undefined when there are no temployment with id', ->
       @brain.set 'temployments', [@temployment]
-      expect(@temployments.get('blah/blah#1')).to.eql(undefined)
+      expect(@temployments.get('p0deje/hubot-temploy-example#7')).to.eql(undefined)
 
     it 'returns temployment by its id', ->
       @brain.set 'temployments', [@temployment]

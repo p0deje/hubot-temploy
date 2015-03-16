@@ -26,7 +26,7 @@ class Temployment
               @stop()
               throw error
         else
-          throw new Error('Repository is not configured properly.')
+          throw new Error('Repository is not configured properly')
       .catch (error) =>
         @cleanRepository()
         throw error

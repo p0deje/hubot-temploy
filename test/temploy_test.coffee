@@ -78,9 +78,9 @@ describe 'hubot-temploy', ->
 
       it 'tells when temployment start has failed', (done) ->
         @adapter.once 'reply', (_, strings) ->
-          expect(strings[0]).to.eql('Failed to temploy blah/blah#1: `tar fxz app.tar.gz --strip-components 1` failed with code 1.')
+          expect(strings[0]).to.eql('Failed to temploy p0deje/hubot-temploy-example#7: Repository is not configured properly.')
           done()
-        @adapter.receive new TextMessage(@user, 'hubot temploy start blah/blah#1')
+        @adapter.receive new TextMessage(@user, 'hubot temploy start p0deje/hubot-temploy-example#7')
 
       it 'removes temployment when start has failed', (done) ->
         @adapter.once 'reply', (_, strings) =>
@@ -88,7 +88,7 @@ describe 'hubot-temploy', ->
             expect(strings[0]).to.eql('No pull requests are temployed at the moment.')
             done()
           @adapter.receive new TextMessage(@user, 'hubot temploys')
-        @adapter.receive new TextMessage(@user, 'hubot temploy start blah/blah#1')
+        @adapter.receive new TextMessage(@user, 'hubot temploy start p0deje/hubot-temploy-example#7')
 
     context 'when temployment can be started', ->
       it 'tells that it has started temploying', (done) ->
