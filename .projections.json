@@ -1,0 +1,13 @@
+{
+  "*": {"make": "npm test"},
+  "package.json": {"dispatch": "npm install"},
+  "src/*.coffee": {
+    "alternate": "test/{}_test.coffee",
+    "type": "src",
+  },
+  "test/test_helper.coffee": {"type": "test"},
+  "test/*_test.coffee": {
+    "alternate": "src/{}.coffee",
+    "type": "test",
+  }
+}

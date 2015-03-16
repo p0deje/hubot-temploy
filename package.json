@@ -1,0 +1,41 @@
+{
+  "name": "hubot-temploy",
+  "version": "0.1.0",
+  "description": "Hubot script that temporarily deploys pull requests",
+  "main": "index.coffee",
+  "homepage": "https://github.com/p0deje/hubot-temploy",
+  "keywords":  "hubot deploy github",
+  "author": "Alex Rodionov",
+  "license": "MIT",
+  "readme": "README.md",
+
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/p0deje/hubot-temploy.git"
+  },
+
+  "bugs": {"url": "https://github.com/p0deje/hubot-temploy/issues"},
+  "dependencies": {},
+
+  "peerDependencies": {
+    "hubot": "*",
+    "q": "*",
+    "js-yaml": "*"
+  },
+
+  "devDependencies": {
+    "hubot": "*",
+    "coffee-script": "*",
+
+    "mocha": "*",
+    "chai": "*",
+    "sinon": "*",
+    "sinon-chai": "*",
+    "temp": "*",
+    "hubot-mock-adapter": "*"
+  },
+
+  "scripts": {
+    "test": "mocha --compilers coffee:coffee-script/register $(find test -name '*_test.coffee' | sort -r)"
+  }
+}
