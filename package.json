@@ -7,7 +7,6 @@
   "keywords":  "hubot, deploy, github",
   "author": "Alex Rodionov",
   "license": "MIT",
-  "readme": "README.md",
 
   "repository": {
     "type": "git",
