@@ -1,10 +1,10 @@
 {
   "name": "hubot-temploy",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Hubot script that temporarily deploys pull requests",
   "main": "index.coffee",
   "homepage": "https://github.com/p0deje/hubot-temploy",
-  "keywords":  "hubot deploy github",
+  "keywords":  "hubot, deploy, github",
   "author": "Alex Rodionov",
   "license": "MIT",
   "readme": "README.md",
