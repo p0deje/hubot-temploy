@@ -5,9 +5,9 @@
 #   HUBOT_GITHUB_TOKEN - GitHub authentication token
 #
 # Commands:
-#  hubot temploys - list of temployed pull requests
-#  hubot temploy start owner/repo#1 - start temployment of pull request #1 for repository owner/repo
-#  hubot temploy stop owner/repo#1 - stop temployment of pull request #1 for repository owner/repo
+#  hubot temploys - List of temployed pull requests
+#  hubot temploy start owner/repo#1 - Start temployment of pull request #1 for repository owner/repo
+#  hubot temploy stop owner/repo#1 - Stop temployment of pull request #1 for repository owner/repo
 #
 # Author:
 #   p0deje

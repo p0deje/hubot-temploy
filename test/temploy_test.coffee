@@ -22,13 +22,13 @@ describe 'hubot-temploy', ->
 
   describe 'help', ->
     it 'tells about temploys command', ->
-      expect(@robot.helpCommands()).to.include('hubot temploys - list of temployed pull requests')
+      expect(@robot.helpCommands()).to.include('hubot temploys - List of temployed pull requests')
 
     it 'tells about temploy start command', ->
-      expect(@robot.helpCommands()).to.include('hubot temploy start owner/repo#1 - start temployment of pull request #1 for repository owner/repo')
+      expect(@robot.helpCommands()).to.include('hubot temploy start owner/repo#1 - Start temployment of pull request #1 for repository owner/repo')
 
     it 'tells about temploy stop command', ->
-      expect(@robot.helpCommands()).to.include('hubot temploy stop owner/repo#1 - stop temployment of pull request #1 for repository owner/repo')
+      expect(@robot.helpCommands()).to.include('hubot temploy stop owner/repo#1 - Stop temployment of pull request #1 for repository owner/repo')
 
   describe 'temploys', ->
     it 'tells when there are no temployments', (done) ->
