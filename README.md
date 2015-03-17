@@ -1,4 +1,4 @@
-# hubot-temploy [![Build Status](https://travis-ci.org/p0deje/hubot-temploy.svg)](https://travis-ci.org/p0deje/hubot-temploy)
+# hubot-temploy [![Build Status](https://travis-ci.org/p0deje/hubot-temploy.svg)](https://travis-ci.org/p0deje/hubot-temploy) [![npm version](https://badge.fury.io/js/hubot-temploy.svg)](http://badge.fury.io/js/hubot-temploy)
 
 [Hubot](https://hubot.github.com/) script to temporarily deploy pull requests.
 
