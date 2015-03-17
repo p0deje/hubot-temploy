@@ -2,6 +2,8 @@ require '../../test_helper'
 exec = require('../../../src/temploy/temployment/process').exec
 
 describe 'Process', ->
+  @timeout(5000)
+
   describe '.exec()', ->
     it 'resolves promise when process completes', (done) ->
       exec('env').then -> done()
