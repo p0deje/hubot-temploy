@@ -18,7 +18,7 @@ describe 'Process', ->
       exec('bash -c "echo 1"').then -> done()
 
     it 'allows to add callbacks ', (done) ->
-      exec('env').progress -> done()
+      exec('echo').progress -> done()
 
     it 'uses process environment', (done) ->
       stdout = ''
