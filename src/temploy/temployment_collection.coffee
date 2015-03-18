@@ -21,6 +21,14 @@ class TemploymentCollection
   map: (fn) ->
     @_getTemployments().map(fn)
 
+  runStopScheduler: ->
+    setInterval =>
+      @map (temployment) =>
+        if temployment.shouldBeStopped()
+          temployment.stop()
+          @remove(temployment.id)
+    , 2000
+
   # private
 
   _getTemployments: ->

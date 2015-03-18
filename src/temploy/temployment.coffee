@@ -21,7 +21,7 @@ class Temployment
             .then => @startNgrok()
             .then (url) =>
               @url = url
-              @schedule => @stop()
+              @stopTime = new Date(new Date().getTime() + @config.ttl)
             .catch (error) =>
               @stop()
               throw error
@@ -43,6 +43,9 @@ class Temployment
 
   isStarted: ->
     @state == 'started'
+
+  shouldBeStopped: ->
+    new Date() >= @stopTime
 
   # private
 
@@ -79,9 +82,6 @@ class Temployment
 
   stopNgrok: ->
     @ngrok.stop() if @state == 'started'
-
-  schedule: (func) ->
-    setTimeout(func, @config.ttl)
 
 
 module.exports = Temployment

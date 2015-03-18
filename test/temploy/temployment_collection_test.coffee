@@ -42,3 +42,32 @@ describe 'TemploymentCollection', ->
       @brain.set 'temployments', [@temployment]
       arr = @temployments.map (temployment) -> temployment.id
       expect(arr).to.eql(['p0deje/hubot-temploy-example#4'])
+
+  describe '#runStopScheduler()', ->
+    beforeEach ->
+      @clock = sinon.useFakeTimers()
+      @temployments.add(@temployment)
+      @temployments.runStopScheduler()
+      sinon.stub(@temployment, 'stop')
+
+    context 'when temployment should be stopped', ->
+      beforeEach ->
+        @temployment.stopTime = new Date()
+        @clock.tick(2000)
+
+      it 'stops temployment', ->
+        expect(@temployment.stop).to.be.called
+
+      it 'removes temployment', ->
+        expect(@temployments.isEmpty()).to.eql(true)
+
+    context 'when temployment should not be stopped', ->
+      beforeEach ->
+        @temployment.stopTime = new Date(new Date().getTime() + 3000)
+        @clock.tick(2000)
+
+      it 'does not stop temployment', ->
+        expect(@temployment.stop).not.to.be.called
+
+      it 'does not remove temployment', ->
+        expect(@temployments.isEmpty()).to.eql(false)

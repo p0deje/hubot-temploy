@@ -50,10 +50,17 @@ describe 'Temployment', ->
       @temployment.start().then =>
         expect(@temployment.url).to.match(/https?:\/\/\w+\.ngrok\.com/)
 
-    it 'schedules stop', ->
-      sinon.spy(@temployment, 'schedule')
-      @temployment.start().then =>
-        expect(@temployment.schedule).to.be.called
+    context '', ->
+      beforeEach ->
+        @clock = sinon.useFakeTimers()
+
+      afterEach ->
+        @clock.restore()
+
+      it 'saves time to stop', ->
+        @temployment.start().then =>
+          ttl = @temployment.config.ttl
+          expect(@temployment.stopTime).to.eql(new Date(new Date().getTime() + ttl))
 
     context 'when error occurs', ->
       beforeEach ->
@@ -115,6 +122,25 @@ describe 'Temployment', ->
     it 'returns true if temployment is started', ->
       @temployment.state = 'started'
       expect(@temployment.isStarted()).to.eql(true)
+
+  describe '#shouldBeStopped()', ->
+    beforeEach ->
+      @clock = sinon.useFakeTimers()
+
+    afterEach ->
+      @clock.restore()
+
+    it 'returns false if temployment stop time is in future', ->
+      @temployment.stopTime = new Date(new Date().getTime() + 1)
+      expect(@temployment.shouldBeStopped()).to.eql(false)
+
+    it 'returns true if temployment stop time is now', ->
+      @temployment.stopTime = new Date()
+      expect(@temployment.shouldBeStopped()).to.eql(true)
+
+    it 'returns true if temployment stop time is in past', ->
+      @temployment.stopTime = new Date(new Date().getTime() - 1)
+      expect(@temployment.shouldBeStopped()).to.eql(true)
 
   describe '#cloneRepository()', ->
     beforeEach ->
@@ -210,13 +236,3 @@ describe 'Temployment', ->
       @temployment.startNgrok().then =>
         @temployment.stopNgrok()
         expect(@temployment.ngrok.stop).not.to.be.called
-
-  describe '#schedule()', ->
-    it 'sets timeout with ttl over function', ->
-      @temployment.config = {ttl: 100}
-      spy = sinon.spy()
-      clock = sinon.useFakeTimers()
-      @temployment.schedule(spy)
-      expect(spy).not.to.be.called
-      clock.tick(100)
-      expect(spy).to.be.called

@@ -22,6 +22,7 @@ module.exports = (robot) ->
   Temployment = require('./temploy/temployment')
   TemploymentCollection = require('./temploy/temployment_collection')
   temployments = new TemploymentCollection(robot.brain)
+  temployments.runStopScheduler()
 
 
   robot.respond /temploys$/i, (msg) ->
@@ -50,7 +51,6 @@ module.exports = (robot) ->
     msg.send "Temploying #{temployment.id}. Hold on."
     temployment.start()
       .then ->
-        temployment.schedule -> temployments.remove(temployment.id)
         msg.reply "Temployed #{temployment.id} to #{temployment.url}."
       .catch (error) ->
         temployments.remove(temployment.id)
