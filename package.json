@@ -1,6 +1,6 @@
 {
   "name": "hubot-temploy",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Hubot script that temporarily deploys pull requests",
   "main": "index.coffee",
   "homepage": "https://github.com/p0deje/hubot-temploy",
