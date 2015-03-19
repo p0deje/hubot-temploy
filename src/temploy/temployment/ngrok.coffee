@@ -13,9 +13,12 @@ class Ngrok
     exec(@command, cwd: @directory)
       .progress (child) =>
         @process = child
+        child.stdout.on 'data', (data) =>
+          if data.toString().indexOf('Read message {"Type":"ReqProxy","Payload":{}}') != -1
+            @lastRequestTime = new Date()
         child.stdout.on 'data', (data) ->
-          match = data.toString().match(/Tunnel established at (.+)/)
-          deferred.resolve(match[1]) if match
+          if match = data.toString().match(/Tunnel established at (.+)/)
+            deferred.resolve(match[1])
       .catch (error) ->
         deferred.reject(error)
 
