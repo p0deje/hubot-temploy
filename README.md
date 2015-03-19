@@ -77,6 +77,5 @@ ttl: 60 # change time until temployment is stopped to 1 hour
 # TODO
 
 1. Make tests less flaky (remove `sort -r` from `npm test`).
-2. Think about making it work on Heroku.
-3. Smarter temployment stop instead of "time to live": e.g. automatically stop if there were no requests within 10 minutes.
-4. Support [hubot-redis-brain](https://github.com/hubot-scripts/hubot-redis-brain).
+2. Smarter temployment stop instead of "time to live": e.g. automatically stop if there were no requests within 10 minutes.
+3. Support [hubot-redis-brain](https://github.com/hubot-scripts/hubot-redis-brain).
