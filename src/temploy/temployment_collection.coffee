@@ -27,7 +27,7 @@ class TemploymentCollection
         if temployment.shouldBeStopped()
           temployment.stop()
           @remove(temployment.id)
-    , 2000
+    , 60 * 1000
 
   # private
 

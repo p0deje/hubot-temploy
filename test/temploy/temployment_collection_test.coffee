@@ -9,6 +9,9 @@ describe 'TemploymentCollection', ->
     @temployments = new TemploymentCollection(@brain)
     @temployment = new Temployment('p0deje/hubot-temploy-example', 4)
 
+  afterEach ->
+    process.removeAllListeners('uncaughtException')
+
   describe '#isEmpty()', ->
     it 'returns true when there are no temployments', ->
       expect(@temployments.isEmpty()).to.eql(true)
@@ -52,8 +55,8 @@ describe 'TemploymentCollection', ->
 
     context 'when temployment should be stopped', ->
       beforeEach ->
-        @temployment.stopTime = new Date()
-        @clock.tick(2000)
+        sinon.stub @temployment, 'shouldBeStopped', -> true
+        @clock.tick(60 * 1000)
 
       it 'stops temployment', ->
         expect(@temployment.stop).to.be.called
@@ -63,8 +66,8 @@ describe 'TemploymentCollection', ->
 
     context 'when temployment should not be stopped', ->
       beforeEach ->
-        @temployment.stopTime = new Date(new Date().getTime() + 3000)
-        @clock.tick(2000)
+        sinon.stub @temployment, 'shouldBeStopped', -> false
+        @clock.tick(60 * 1000)
 
       it 'does not stop temployment', ->
         expect(@temployment.stop).not.to.be.called
