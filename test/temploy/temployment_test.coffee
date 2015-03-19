@@ -50,18 +50,6 @@ describe 'Temployment', ->
       @temployment.start().then =>
         expect(@temployment.url).to.match(/https?:\/\/\w+\.ngrok\.com/)
 
-    context '', ->
-      beforeEach ->
-        @clock = sinon.useFakeTimers()
-
-      afterEach ->
-        @clock.restore()
-
-      it 'saves time to stop', ->
-        @temployment.start().then =>
-          ttl = @temployment.config.ttl
-          expect(@temployment.stopTime).to.eql(new Date(new Date().getTime() + ttl))
-
     context 'when error occurs', ->
       beforeEach ->
         sinon.stub @temployment, 'startTemployment', ->
@@ -126,20 +114,30 @@ describe 'Temployment', ->
   describe '#shouldBeStopped()', ->
     beforeEach ->
       @clock = sinon.useFakeTimers()
+      @temployment.config = {ttl: 1000}
 
     afterEach ->
       @clock.restore()
 
-    it 'returns false if temployment stop time is in future', ->
-      @temployment.stopTime = new Date(new Date().getTime() + 1)
+    it 'returns false if temployment is not started', ->
+      @temployment.state = 'stopping'
+      @temployment.ngrok = {lastRequestTime: new Date()}
+      @clock.tick(1001)
       expect(@temployment.shouldBeStopped()).to.eql(false)
 
-    it 'returns true if temployment stop time is now', ->
-      @temployment.stopTime = new Date()
-      expect(@temployment.shouldBeStopped()).to.eql(true)
+    it 'returns false if last request was made less than time-to-live ago', ->
+      @temployment.ngrok = {lastRequestTime: new Date()}
+      @clock.tick(999)
+      expect(@temployment.shouldBeStopped()).to.eql(false)
 
-    it 'returns true if temployment stop time is in past', ->
-      @temployment.stopTime = new Date(new Date().getTime() - 1)
+    it 'returns false if last request was made time-to-live ago', ->
+      @temployment.ngrok = {lastRequestTime: new Date()}
+      @clock.tick(1000)
+      expect(@temployment.shouldBeStopped()).to.eql(false)
+
+    it 'returns true if last request was made more than time-to-live ago', ->
+      @temployment.ngrok = {lastRequestTime: new Date()}
+      @clock.tick(1001)
       expect(@temployment.shouldBeStopped()).to.eql(true)
 
   describe '#cloneRepository()', ->
@@ -231,6 +229,12 @@ describe 'Temployment', ->
       @temployment.startNgrok().then =>
         @temployment.stopNgrok()
         expect(@temployment.ngrok.stop).to.be.called
+
+    it 'changes temployment state to stopping', ->
+      @temployment.state = 'started'
+      @temployment.startNgrok().then =>
+        @temployment.stopNgrok()
+        expect(@temployment.state).to.be.eql('stopping')
 
     it 'does nothing if temployment is not started', ->
       @temployment.startNgrok().then =>

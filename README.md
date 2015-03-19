@@ -42,10 +42,9 @@ hubot temploy start owner/repo#1
 
 _where `owner/repo` is the path to your Github repository and `1` is your pull request number_
 
-After the script is executed, `hubot-temploy` will do the following:
+After the script is executed, `hubot-temploy` will start [ngrok](https://ngrok.com/) (by default, on port 3000) and respond with exposed server URL.
 
-* start [ngrok](https://ngrok.com/) (by default, on port 3000) and respond with exposed server URL
-* schedule deployment stopping (by default, in 30 minutes)
+Every 1 minute it will check teployment for HTTP requests. If no request has been made within "time-to-live" period (by default, 30 minutes since last request), temployment will be automatically stopped.
 
 Temployment stopping is done using `stop` script from configuration file (in this case it just kills rails process):
 
@@ -71,11 +70,10 @@ You can also change a couple of configuration options:
 ```yaml
 # .temploy.yml
 ngrok_command: vagrant ssh -c "ngrok -log=stdout 3000" # change ngrok command to use (note that "-log=stdout" is mandatory)
-ttl: 60 # change time until temployment is stopped to 1 hour
+ttl: 60 # change time (in minutes) to wait since last HTTP request before stopping
 ```
 
 # TODO
 
 1. Make tests less flaky (remove `sort -r` from `npm test`).
-2. Smarter temployment stop instead of "time to live": e.g. automatically stop if there were no requests within 10 minutes.
-3. Support [hubot-redis-brain](https://github.com/hubot-scripts/hubot-redis-brain).
+2. Support [hubot-redis-brain](https://github.com/hubot-scripts/hubot-redis-brain).

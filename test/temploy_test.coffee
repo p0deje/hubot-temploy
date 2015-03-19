@@ -114,16 +114,22 @@ describe 'hubot-temploy', ->
               done()
         @adapter.receive new TextMessage(@user, 'hubot temploy start p0deje/hubot-temploy-example#4')
 
-      it 'stops temployment after configured time to live', (done) ->
-        @adapter.once 'reply', (_, strings) =>
-          # Wait until temployment is automatically stopped.
-          setTimeout =>
+      context 'after time-to-live since last request', ->
+        before ->
+          @clock = sinon.useFakeTimers()
+
+        it 'stops temployment ', (done) ->
+          @adapter.once 'reply', (_, strings) =>
+            @clock.tick(61 * 1000)
             @adapter.once 'send', (_, strings) =>
               expect(strings[0]).to.eql('No pull requests are temployed at the moment.')
               done()
-            @adapter.receive new TextMessage(@user, 'hubot temploys')
-          , 6000
-        @adapter.receive new TextMessage(@user, 'hubot temploy start p0deje/hubot-temploy-example#6')
+            @clock.restore()
+            # Give bot some time to stop temployment.
+            setTimeout =>
+              @adapter.receive new TextMessage(@user, 'hubot temploys')
+            , 500
+          @adapter.receive new TextMessage(@user, 'hubot temploy start p0deje/hubot-temploy-example#6')
 
   describe 'temploy stop', ->
     context 'when temployment cannot be stopped', ->

@@ -45,7 +45,7 @@ class Temployment
     @state == 'started'
 
   shouldBeStopped: ->
-    new Date() >= @stopTime
+    @state != 'stopping' and new Date() > (@ngrok.lastRequestTime.getTime() + @config.ttl)
 
   # private
 
@@ -81,7 +81,9 @@ class Temployment
     @ngrok.start()
 
   stopNgrok: ->
-    @ngrok.stop() if @state == 'started'
+    if @state == 'started'
+      @state = 'stopping'
+      @ngrok.stop()
 
 
 module.exports = Temployment
