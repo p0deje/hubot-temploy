@@ -19,9 +19,7 @@ class Temployment
         if @configuredForTemployment()
           @startTemployment()
             .then => @startNgrok()
-            .then (url) =>
-              @url = url
-              @stopTime = new Date(new Date().getTime() + @config.ttl)
+            .then (url) => @url = url
             .catch (error) =>
               @stop()
               throw error
