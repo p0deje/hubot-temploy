@@ -1,4 +1,5 @@
 require '../test_helper'
+Q = require 'q'
 Robot = require('hubot/src/robot')
 Temployment = require('../../src/temploy/temployment')
 TemploymentCollection = require('../../src/temploy/temployment_collection')
@@ -51,18 +52,23 @@ describe 'TemploymentCollection', ->
       @clock = sinon.useFakeTimers()
       @temployments.add(@temployment)
       @temployments.runStopScheduler()
-      sinon.stub(@temployment, 'stop')
+      sinon.stub @temployment, 'stop', -> Q.resolve()
 
     context 'when temployment should be stopped', ->
       beforeEach ->
         sinon.stub @temployment, 'shouldBeStopped', -> true
         @clock.tick(60 * 1000)
+        @clock.restore()
 
       it 'stops temployment', ->
         expect(@temployment.stop).to.be.called
 
-      it 'removes temployment', ->
-        expect(@temployments.isEmpty()).to.eql(true)
+      # TODO: Better way to wait until temployment is stopped?
+      it 'removes temployment', (done) ->
+        setTimeout =>
+          expect(@temployments.isEmpty()).to.eql(true)
+          done()
+        , 100
 
     context 'when temployment should not be stopped', ->
       beforeEach ->

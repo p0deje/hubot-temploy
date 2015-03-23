@@ -25,8 +25,8 @@ class TemploymentCollection
     setInterval =>
       @map (temployment) =>
         if temployment.shouldBeStopped()
-          temployment.stop()
-          @remove(temployment.id)
+          temployment.stop().then =>
+            @remove(temployment.id)
     , 60 * 1000
 
   # private
