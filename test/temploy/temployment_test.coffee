@@ -115,28 +115,26 @@ describe 'Temployment', ->
     beforeEach ->
       @clock = sinon.useFakeTimers()
       @temployment.config = {ttl: 1000}
+      @temployment.ngrok = {lastRequestTime: new Date()}
+      @temployment.state = 'started'
 
     afterEach ->
       @clock.restore()
 
     it 'returns false if temployment is not started', ->
       @temployment.state = 'stopping'
-      @temployment.ngrok = {lastRequestTime: new Date()}
       @clock.tick(1001)
       expect(@temployment.shouldBeStopped()).to.eql(false)
 
     it 'returns false if last request was made less than time-to-live ago', ->
-      @temployment.ngrok = {lastRequestTime: new Date()}
       @clock.tick(999)
       expect(@temployment.shouldBeStopped()).to.eql(false)
 
     it 'returns false if last request was made time-to-live ago', ->
-      @temployment.ngrok = {lastRequestTime: new Date()}
       @clock.tick(1000)
       expect(@temployment.shouldBeStopped()).to.eql(false)
 
     it 'returns true if last request was made more than time-to-live ago', ->
-      @temployment.ngrok = {lastRequestTime: new Date()}
       @clock.tick(1001)
       expect(@temployment.shouldBeStopped()).to.eql(true)
 

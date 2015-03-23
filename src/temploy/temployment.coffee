@@ -43,7 +43,7 @@ class Temployment
     @state == 'started'
 
   shouldBeStopped: ->
-    @state != 'stopping' and new Date() > (@ngrok.lastRequestTime.getTime() + @config.ttl)
+    @isStarted() and new Date() > (@ngrok.lastRequestTime.getTime() + @config.ttl)
 
   # private
 
