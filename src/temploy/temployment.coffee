@@ -18,8 +18,9 @@ class Temployment
       .then =>
         if @configuredForTemployment()
           @startTemployment()
-            .then => @startNgrok()
-            .then (url) => @url = url
+            .then =>
+              @startNgrok()
+                .then (url) => @url = url
             .catch (error) =>
               @stop()
               throw error
@@ -79,7 +80,7 @@ class Temployment
     @ngrok.start()
 
   stopNgrok: ->
-    if @state == 'started'
+    if @isStarted()
       @state = 'stopping'
       @ngrok.stop()
 
