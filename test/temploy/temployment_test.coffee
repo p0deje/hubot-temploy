@@ -25,17 +25,6 @@ describe 'Temployment', ->
       @temployment.start().then =>
         expect(@temployment.cloneRepository).to.be.called
 
-    it 'propagates clone failure error', ->
-      new Temployment('blah/blah', 1).start().catch (error) ->
-        # On Mac, tar exits with 1.
-        # On Linux, tar exits with 2.
-        expect(error.message).to.match(/^`tar fxz app.tar.gz --strip-components 1` failed with code (1|2)$/)
-
-    it 'checks config validity', ->
-      @temployment.config = {exists: -> false}
-      @temployment.start().catch (error) ->
-        expect(error.message).to.eql('Repository is not configured properly')
-
     it 'starts temployment', ->
       sinon.spy(@temployment, 'startTemployment')
       @temployment.start().then =>
@@ -51,29 +40,79 @@ describe 'Temployment', ->
         expect(@temployment.url).to.match(/https?:\/\/\w+\.ngrok\.com/)
 
     context 'when error occurs', ->
-      beforeEach ->
-        sinon.stub @temployment, 'startTemployment', ->
-          deferred = Q.defer()
-          setTimeout ->
-            deferred.reject new Error('Failed to temploy.')
-          , 500
-          deferred.promise
-        # Use stubs to ensure original stopping process
-        # is not leaked between tests making them flaky
-        sinon.stub @temployment, 'stop'
-        sinon.stub @temployment, 'cleanRepository'
+      context 'during repository clone', ->
+        beforeEach ->
+          @temployment = new Temployment('blah/blah', 1)
+          sinon.stub @temployment, 'cleanRepository'
 
-      it 'propagates error', ->
-        @temployment.start().catch (error) ->
-          expect(error.message).to.eql('Failed to temploy.')
+        it 'propagates error', ->
+          @temployment.start().catch (error) ->
+            # On Mac, tar exits with 1.
+            # On Linux, tar exits with 2.
+            expect(error.message).to.match(/^`tar fxz app.tar.gz --strip-components 1` failed with code (1|2)$/)
 
-      it 'stops temployment', ->
-        @temployment.start().catch =>
-          expect(@temployment.stop).to.be.called
+        it 'cleans repository', ->
+          @temployment.start().catch =>
+            expect(@temployment.cleanRepository).to.be.called
 
-      it 'cleans repository', ->
-        @temployment.start().catch =>
-          expect(@temployment.cleanRepository).to.be.called
+      context 'because repository is misconfigured', ->
+        beforeEach ->
+          sinon.stub @temployment, 'configuredForTemployment', -> false
+          sinon.stub @temployment, 'cleanRepository'
+
+        it 'propagates error', ->
+          @temployment.start().catch (error) ->
+            expect(error.message).to.eql('Repository is not configured properly')
+
+        it 'cleans repository', ->
+          @temployment.start().catch =>
+            expect(@temployment.cleanRepository).to.be.called
+
+      context 'during temployment start', ->
+        beforeEach ->
+          sinon.stub @temployment, 'startTemployment', ->
+            deferred = Q.defer()
+            setTimeout ->
+              deferred.reject new Error('Failed to temploy.')
+            , 500
+            deferred.promise
+          sinon.stub @temployment, 'stop'
+          sinon.stub @temployment, 'cleanRepository'
+
+        it 'propagates error', ->
+          @temployment.start().catch (error) ->
+            expect(error.message).to.eql('Failed to temploy.')
+
+        it 'stops temployment', ->
+          @temployment.start().catch =>
+            expect(@temployment.stop).to.be.called
+
+        it 'cleans repository', ->
+          @temployment.start().catch =>
+            expect(@temployment.cleanRepository).to.be.called
+
+      context 'during ngrok start', ->
+        beforeEach ->
+          sinon.stub @temployment, 'startNgrok', ->
+            deferred = Q.defer()
+            setTimeout ->
+              deferred.reject new Error('Failed to start ngrok.')
+            , 500
+            deferred.promise
+          sinon.stub @temployment, 'stop'
+          sinon.stub @temployment, 'cleanRepository'
+
+        it 'propagates error', ->
+          @temployment.start().catch (error) ->
+            expect(error.message).to.eql('Failed to start ngrok.')
+
+        it 'stops temployment', ->
+          @temployment.start().catch =>
+            expect(@temployment.stop).to.be.called
+
+        it 'cleans repository', ->
+          @temployment.start().catch =>
+            expect(@temployment.cleanRepository).to.be.called
 
   describe '#stop()', ->
     beforeEach ->
@@ -232,7 +271,7 @@ describe 'Temployment', ->
       @temployment.state = 'started'
       @temployment.startNgrok().then =>
         @temployment.stopNgrok()
-        expect(@temployment.state).to.be.eql('stopping')
+        expect(@temployment.state).to.eql('stopping')
 
     it 'does nothing if temployment is not started', ->
       @temployment.startNgrok().then =>
