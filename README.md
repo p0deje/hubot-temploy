@@ -77,3 +77,4 @@ ttl: 60 # change time (in minutes) to wait since last HTTP request before stoppi
 
 1. Make tests less flaky (remove `sort -r` from `npm test`).
 2. Support [hubot-redis-brain](https://github.com/hubot-scripts/hubot-redis-brain).
+3. Add proper logging system.
