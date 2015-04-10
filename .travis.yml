@@ -1,2 +1,6 @@
 language: node_js
 before_script: npm install ngrok -g
+env:
+  global:
+    # Export HUBOT_GITHUB_TOKEN to avoid Github API limits.
+    secure: QFMOwG4CCk87pPnpdtlIOmA/YYj8fpdgBHEFuedpbibvtnQBpvzM6O8tqowswuOsQ5aTekhsk+UZHi6gvvAYVCYey1TfRj56qR7MX4ObAQh75WFdhwLAxRFAVepL+z0EUGMdGEet7mQnItagI9LiWiFscRbBIuWWwzkYX+A/Dcc=
