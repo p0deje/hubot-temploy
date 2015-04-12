@@ -105,13 +105,16 @@ describe 'hubot-temploy', ->
 
       it 'successfully temploys app', (done) ->
         @adapter.once 'reply', (_, strings) ->
-          url = strings[0].match(/\w+\.ngrok\.com/)[0]
-          get host: url, (response) ->
-            body = ''
-            response.on 'data', (chunk) -> body += chunk
-            response.once 'end', ->
-              expect(body).to.include('Simple hubot-temploy example app')
-              done()
+          # Give python server some time to start.
+          setTimeout ->
+            url = strings[0].match(/\w+\.ngrok\.com/)[0]
+            get host: url, (response) ->
+              body = ''
+              response.on 'data', (chunk) -> body += chunk
+              response.once 'end', ->
+                expect(body).to.include('Simple hubot-temploy example app')
+                done()
+          , 500
         @adapter.receive new TextMessage(@user, 'hubot temploy start p0deje/hubot-temploy-example#4')
 
       context 'after time-to-live since last request', ->
