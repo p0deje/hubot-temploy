@@ -73,8 +73,12 @@ ngrok_command: vagrant ssh -c "ngrok -log=stdout 3000" # change ngrok command to
 ttl: 60 # change time (in minutes) to wait since last HTTP request before stopping
 ```
 
+# Notes
+
+1. It doesn't work on Heroku. You have to deploy hubot on your own server so you could install at least [ngrok](https://ngrok.com/).
+2. It doesn't support [hubot-redis-brain](https://github.com/hubot-scripts/hubot-redis-brain) because of the current architecture. Pull requests are welcome.
+
 # TODO
 
 1. Make tests less flaky (remove `sort -r` from `npm test`).
-2. Support [hubot-redis-brain](https://github.com/hubot-scripts/hubot-redis-brain).
-3. Add proper logging system.
+2. Add proper logging system.
