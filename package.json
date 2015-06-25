@@ -14,18 +14,20 @@
   },
 
   "bugs": {"url": "https://github.com/p0deje/hubot-temploy/issues"},
+
   "dependencies": {
     "q": "*",
-    "js-yaml": "*"
-  },
-
-  "peerDependencies": {
-    "hubot": "*",
+    "js-yaml": "*",
     "ngrok-daemon": "*",
     "tail": "*"
   },
 
+  "peerDependencies": {
+    "hubot": "*"
+  },
+
   "devDependencies": {
+    "hubot": "*",
     "coffee-script": "*",
     "mocha": "*",
     "chai": "*",
