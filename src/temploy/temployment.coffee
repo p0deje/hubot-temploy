@@ -1,6 +1,7 @@
 Q = require('q')
+Ngrok = require('ngrok-daemon')
+Tail = require('tail').Tail
 Config = require('./temployment/config')
-Ngrok = require('./temployment/ngrok')
 Repository = require('./temployment/repository')
 exec = require('./temployment/process').exec
 
@@ -20,7 +21,6 @@ class Temployment
           @startTemployment()
             .then =>
               @startNgrok()
-                .then (url) => @url = url
             .catch (error) =>
               @stop()
               throw error
@@ -34,7 +34,7 @@ class Temployment
   # the whole process from stopping exposing tool to cleanup.
   stop: ->
     @stopNgrok()
-    @stopTemployment()
+      .then => @stopTemployment()
       .then => @cleanRepository()
 
   isStarting: ->
@@ -44,7 +44,7 @@ class Temployment
     @state == 'started'
 
   shouldBeStopped: ->
-    @isStarted() and new Date() > (@ngrok.lastRequestTime.getTime() + @config.ttl)
+    @isStarted() and new Date() > (@lastRequestTime.getTime() + @config.ttl)
 
   # private
 
@@ -76,13 +76,25 @@ class Temployment
       .then => @state = 'stopped'
 
   startNgrok: ->
-    @ngrok or= new Ngrok(@config.ngrokCommand, @repo.directory)
-    @ngrok.start()
+    Ngrok.start(@config.ngrokCommand, cwd: @repo.directory)
+      .then (tunnel) =>
+        @url = tunnel.url
+        @ngrokPid = tunnel.pid
+        @ngrokLog = tunnel.log
+
+        @lastRequestTime = new Date()
+        @attachRequestTimeListener()
 
   stopNgrok: ->
-    if @isStarted()
+    Ngrok.isRunning(@ngrokPid).then =>
       @state = 'stopping'
-      @ngrok.stop()
+      Ngrok.stop(@ngrokPid)
 
+  attachRequestTimeListener: ->
+    tail = new Tail(@ngrokLog, '\n', {}, true)
+    tail.on 'line', (line) =>
+      if line.indexOf('Read message {"Type":"ReqProxy","Payload":{}}') != -1
+        @lastRequestTime = new Date()
+    tail.watch()
 
 module.exports = Temployment

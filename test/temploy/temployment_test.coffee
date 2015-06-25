@@ -1,8 +1,8 @@
 require '../test_helper'
 Q = require('q')
 Fs = require('fs')
+Ngrok = require('ngrok-daemon')
 Config = require('../../src/temploy/temployment/config')
-Ngrok = require('../../src/temploy/temployment/ngrok')
 exec = require('../../src/temploy/temployment/process').exec
 Temployment = require('../../src/temploy/temployment')
 
@@ -34,10 +34,6 @@ describe 'Temployment', ->
       sinon.spy(@temployment, 'startNgrok')
       @temployment.start().then =>
         expect(@temployment.startNgrok).to.be.called
-
-    it 'saves ngrok URL', ->
-      @temployment.start().then =>
-        expect(@temployment.url).to.match(/https?:\/\/\w+\.ngrok\.com/)
 
     context 'when error occurs', ->
       context 'during repository clone', ->
@@ -118,14 +114,17 @@ describe 'Temployment', ->
     beforeEach ->
       @temployment.config = {start: 'echo', stop: 'echo'}
       @temployment.repo = {directory: '/tmp', clean: sinon.stub()}
+      sinon.stub @temployment, 'stopNgrok', -> Q.resolve()
+
+    afterEach ->
+      @temployment.stopNgrok.restore()
 
     it 'kills ngrok', ->
-      sinon.spy(@temployment, 'stopNgrok')
       @temployment.stop().then =>
         expect(@temployment.stopNgrok).to.be.called
 
     it 'calls temployment stop command', ->
-      sinon.spy(@temployment, 'stopTemployment')
+      sinon.stub(@temployment, 'stopTemployment')
       @temployment.stop().then =>
         expect(@temployment.stopTemployment).to.be.called
 
@@ -154,7 +153,7 @@ describe 'Temployment', ->
     beforeEach ->
       @clock = sinon.useFakeTimers()
       @temployment.config = {ttl: 1000}
-      @temployment.ngrok = {lastRequestTime: new Date()}
+      @temployment.lastRequestTime = new Date()
       @temployment.state = 'started'
 
     afterEach ->
@@ -250,30 +249,40 @@ describe 'Temployment', ->
         expect(@temployment.state).to.eql('stopped')
 
   describe '#startNgrok()', ->
-    it 'starts ngrok', ->
-      @temployment.ngrok = new Ngrok('ngrok -log=stdout 3000', '/tmp')
-      sinon.spy(@temployment.ngrok, 'start')
+    beforeEach ->
+      @temployment.config = {ngrokCommand: 'ngrok -log=stdout 3000'}
+      @temployment.repo = {directory: '/tmp'}
+
+    it 'starts ngrok', (done) ->
       @temployment.startNgrok().then =>
-        expect(@temployment.ngrok.start).to.be.called
+        Ngrok.isRunning(@temployment.ngrokPid).then ->
+          done()
+
+    it 'saves tunnel URL', ->
+      @temployment.startNgrok().then =>
+        expect(@temployment.url).to.match(/https?:\/\/\w+\.ngrok\.com/)
+
+    it 'saves tunnel log', ->
+      @temployment.startNgrok().then =>
+        expect(@temployment.log).to.be
 
   describe '#stopNgrok()', ->
     beforeEach ->
-      @temployment.ngrok = new Ngrok('ngrok -log=stdout 3000', '/tmp')
-      sinon.spy(@temployment.ngrok, 'stop')
+      @temployment.config = {ngrokCommand: 'ngrok -log=stdout 3000'}
+      @temployment.repo = {directory: '/tmp'}
 
-    it 'stops ngrok', ->
-      @temployment.state = 'started'
+    it 'stops ngrok', (done) ->
       @temployment.startNgrok().then =>
-        @temployment.stopNgrok()
-        expect(@temployment.ngrok.stop).to.be.called
+        @temployment.stopNgrok().then =>
+          Ngrok.isRunning(@temployment.ngrokPid).catch ->
+            done()
 
     it 'changes temployment state to stopping', ->
-      @temployment.state = 'started'
       @temployment.startNgrok().then =>
-        @temployment.stopNgrok()
-        expect(@temployment.state).to.eql('stopping')
+        @temployment.stopNgrok().then =>
+          expect(@temployment.state).to.eql('stopping')
 
-    it 'does nothing if temployment is not started', ->
-      @temployment.startNgrok().then =>
-        @temployment.stopNgrok()
-        expect(@temployment.ngrok.stop).not.to.be.called
+    it 'does nothing if ngrok is not running', ->
+      sinon.stub(Ngrok, 'stop')
+      @temployment.stopNgrok().catch ->
+        expect(Ngrok.stop).not.to.be.called

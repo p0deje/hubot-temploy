@@ -20,13 +20,13 @@
   },
 
   "peerDependencies": {
-    "hubot": "*"
+    "hubot": "*",
+    "ngrok-daemon": "*",
+    "tail": "*"
   },
 
   "devDependencies": {
-    "hubot": "*",
     "coffee-script": "*",
-
     "mocha": "*",
     "chai": "*",
     "sinon": "*",

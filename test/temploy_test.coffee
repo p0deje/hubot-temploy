@@ -174,6 +174,6 @@ describe 'hubot-temploy', ->
       it 'tells that temployment stop has failed', (done) ->
         exec('rm -rf /tmp/hubot').then =>
           @adapter.once 'reply', (_, strings) ->
-            expect(strings[0]).to.eql('Failed to stop temployment p0deje/hubot-temploy-example#4: spawn ENOENT.')
+            expect(strings[0]).to.eql('Failed to stop temployment p0deje/hubot-temploy-example#4: spawn script/temploy_stop.sh ENOENT.')
             done()
           @adapter.receive new TextMessage(@user, 'hubot temploy stop p0deje/hubot-temploy-example#4')

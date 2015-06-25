@@ -13,7 +13,7 @@
 #   p0deje
 #
 # Tags:
-#   deploy
+#   deploy, github
 #
 # URLs:
 #   https://github.com/p0deje/hubot-temploy
