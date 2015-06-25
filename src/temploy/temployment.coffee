@@ -22,13 +22,13 @@ class Temployment
             .then =>
               @startNgrok()
             .catch (error) =>
-              @stop()
-              throw error
+              @stop().fin ->
+                throw error
         else
           throw new Error('Repository is not configured properly')
       .catch (error) =>
-        @cleanRepository()
-        throw error
+        @cleanRepository().fin ->
+          throw error
 
   # Generic function to stop temployment, which covers
   # the whole process from stopping exposing tool to cleanup.

@@ -39,7 +39,7 @@ describe 'Temployment', ->
       context 'during repository clone', ->
         beforeEach ->
           @temployment = new Temployment('blah/blah', 1)
-          sinon.stub @temployment, 'cleanRepository'
+          sinon.stub @temployment, 'cleanRepository', -> Q.resolve()
 
         it 'propagates error', ->
           @temployment.start().catch (error) ->
@@ -54,7 +54,7 @@ describe 'Temployment', ->
       context 'because repository is misconfigured', ->
         beforeEach ->
           sinon.stub @temployment, 'configuredForTemployment', -> false
-          sinon.stub @temployment, 'cleanRepository'
+          sinon.stub @temployment, 'cleanRepository', -> Q.resolve()
 
         it 'propagates error', ->
           @temployment.start().catch (error) ->
@@ -72,8 +72,8 @@ describe 'Temployment', ->
               deferred.reject new Error('Failed to temploy.')
             , 500
             deferred.promise
-          sinon.stub @temployment, 'stop'
-          sinon.stub @temployment, 'cleanRepository'
+          sinon.stub @temployment, 'stop', -> Q.resolve()
+          sinon.stub @temployment, 'cleanRepository', -> Q.resolve()
 
         it 'propagates error', ->
           @temployment.start().catch (error) ->
@@ -95,8 +95,8 @@ describe 'Temployment', ->
               deferred.reject new Error('Failed to start ngrok.')
             , 500
             deferred.promise
-          sinon.stub @temployment, 'stop'
-          sinon.stub @temployment, 'cleanRepository'
+          sinon.stub @temployment, 'stop', -> Q.resolve()
+          sinon.stub @temployment, 'cleanRepository', -> Q.resolve()
 
         it 'propagates error', ->
           @temployment.start().catch (error) ->
